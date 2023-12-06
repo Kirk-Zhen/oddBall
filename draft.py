@@ -11,16 +11,24 @@ def load_data(path):
     return G
 
 def get_feature(G):
-    #feature dictionary which format is {node i's id:Ni, Ei, Wi, λw,i}
+    '''
+    feature dictionary which format is {node i's id : Ni, Ei, Wi, λw,i }
+
+    Ni:     number of neighbors (degress) of ego i
+    Ei:     number of edges in egonet i
+    Wi:     total weight of egonet i
+    λw,i:   principal egenvalue of the weighted adjacency matrix of egonet i
+    '''
     featureDict = {}
     nodelist = list(G.nodes)
-    for ite in nodelist:
-        featureDict[ite] = []
+
+    for node in nodelist:
+        featureDict[node] = []
         #the number of node i's neighbor
-        Ni = G.degree(ite)
-        featureDict[ite].append(Ni)
+        Ni = G.degree(node)
+        featureDict[node].append(Ni)
         #the set of node i's neighbor
-        iNeighbor = list(G.neighbors(ite))
+        iNeighbor = list(G.neighbors(node))
         #the number of edges in egonet i
         Ei = 0
         #sum of weights in egonet i
@@ -30,8 +38,8 @@ def get_feature(G):
         Ei += Ni
         egonet = nx.Graph()
         for nei in iNeighbor:
-            Wi += G[nei][ite]['weight']
-            egonet.add_edge(ite, nei, weight=G[nei][ite]['weight'])
+            Wi += G[nei][node]['weight']
+            egonet.add_edge(node, nei, weight=G[nei][node]['weight'])
         iNeighborLen = len(iNeighbor)
         for it1 in range(iNeighborLen):
             for it2 in range(it1+1, iNeighborLen):
@@ -44,9 +52,9 @@ def get_feature(G):
         eigenvalue, eigenvector = np.linalg.eig(egonet_adjacency_matrix)
         eigenvalue.sort()
         Lambda_w_i = max(abs(eigenvalue[0]), abs(eigenvalue[-1]))
-        featureDict[ite].append(Ei)
-        featureDict[ite].append(Wi)
-        featureDict[ite].append(Lambda_w_i)
+        featureDict[node].append(Ei)
+        featureDict[node].append(Wi)
+        featureDict[node].append(Lambda_w_i)
     return featureDict
 
 
