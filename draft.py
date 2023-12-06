@@ -12,16 +12,17 @@ def load_data(path):
 
 def get_feature(G):
     '''
-    feature dictionary which format is {node i's id : Ni, Ei, Wi, λw,i }
-
+    feature dictionary which format is { node i's id : [Ni, Ei, Wi, λw,i] }
     Ni:     number of neighbors (degress) of ego i
     Ei:     number of edges in egonet i
     Wi:     total weight of egonet i
     λw,i:   principal egenvalue of the weighted adjacency matrix of egonet i
     '''
     featureDict = {}
+    nodes = list(G.nodes)
+    # iterate all nodes in the graph 
+    featureDict = {}
     nodelist = list(G.nodes)
-
     for node in nodelist:
         featureDict[node] = []
         #the number of node i's neighbor

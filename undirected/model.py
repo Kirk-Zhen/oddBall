@@ -3,7 +3,7 @@
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import LocalOutlierFactor
-# feature dictionary which format is {node i's id:Ni, Ei, Wi, λw,i}
+# feature dictionary which format is  { node i's id : [Ni, Ei, Wi, λw,i] }
 
 def star_or_clique(featureDict):
     N = []
