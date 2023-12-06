@@ -16,7 +16,7 @@ def get_feature(G):
     Ni:     number of neighbors (degress) of ego i
     Ei:     number of edges in egonet i
     Wi:     total weight of egonet i
-    λw,i:   principal egenvalue of the weighted adjacency matrix of egonet i
+    λw,i:   the principal eigenvalue(the maximum eigenvalue with abs) of egonet i's weighted adjacency matrix
     '''
     featureDict = {}
     nodes = list(G.nodes)
@@ -28,20 +28,17 @@ def get_feature(G):
         #the number of node i's neighbor
         Ni = G.degree(node)
         featureDict[node].append(Ni)
-        #the set of node i's neighbor
-        iNeighbor = list(G.neighbors(node))
-        #the number of edges in egonet i
-        Ei = 0
-        #sum of weights in egonet i
-        Wi = 0
-        #the principal eigenvalue(the maximum eigenvalue with abs) of egonet i's weighted adjacency matrix
-        Lambda_w_i = 0
+
+        # initialization of features:
+        Ei, Wi, Lambda_w_i = 0, 0, 0
         Ei += Ni
+
+        iNeighbor = list(G.neighbors(node)) # the set of node i's neighbor
         egonet = nx.Graph()
         for nei in iNeighbor:
             Wi += G[nei][node]['weight']
             egonet.add_edge(node, nei, weight=G[nei][node]['weight'])
-        iNeighborLen = len(iNeighbor)
+        iNeighborLen = len(iNeighbor) # number of i's neighbor
         for it1 in range(iNeighborLen):
             for it2 in range(it1+1, iNeighborLen):
                 #if it1 in it2's neighbor list
@@ -52,6 +49,11 @@ def get_feature(G):
         egonet_adjacency_matrix = nx.adjacency_matrix(egonet).todense()
         eigenvalue, eigenvector = np.linalg.eig(egonet_adjacency_matrix)
         eigenvalue.sort()
+
+        # In case that the matrix is not positive definite, we need to consider the negative lambda
+        # Positive Definite: 
+        #   M is positive definite if z*Mz is positive for every nonzero complex column vector z
+        #   where z* is the conjugate transpose of z
         Lambda_w_i = max(abs(eigenvalue[0]), abs(eigenvalue[-1]))
         featureDict[node].append(Ei)
         featureDict[node].append(Wi)
