@@ -5,6 +5,11 @@ from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import LocalOutlierFactor
 # feature dictionary which format is  { node i's id : [Ni, Ei, Wi, λw,i] }
 
+
+def outlierness_score(xi, yi, C, theta):
+    return (max(yi, C*(xi**theta))/min(yi, C*(xi**theta))) * np.log(abs(yi-C*(xi**theta))+1)
+
+# Observation 1: EDPL
 def star_or_clique(featureDict):
     N = []
     E = []
@@ -14,12 +19,9 @@ def star_or_clique(featureDict):
     #E=CN^α => log on both sides => logE=logC+αlogN
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
-    y_train = np.log2(E)
-    y_train = np.array(y_train)
-    y_train = y_train.reshape(len(E), 1)
-    x_train = np.log2(N)
-    x_train = np.array(x_train)
-    x_train = x_train.reshape(len(N), 1)
+    y_train = np.array(np.log2(E)).reshape(-1, 1)
+    x_train = np.array(np.log2(N)).reshape(-1, 1)
+
     model = LinearRegression()
     model.fit(x_train, y_train)
     w = model.coef_[0][0]
@@ -30,11 +32,11 @@ def star_or_clique(featureDict):
     for key in featureDict.keys():
         yi = featureDict[key][1]
         xi = featureDict[key][0]
-        outlineScore = (max(yi, C*(xi**alpha))/min(yi, C*(xi**alpha)))*np.log(abs(yi-C*(xi**alpha))+1)
-        outlineScoreDict[key] = outlineScore
+        outlineScoreDict[key] =  outlierness_score(xi, yi, C, alpha)
     return outlineScoreDict
 
 
+# Observation 2: EWPL
 def heavy_vicinity(featureDict):
     W = []
     E = []
@@ -44,12 +46,9 @@ def heavy_vicinity(featureDict):
     #W=CE^β => log on both sides => logW=logC+βlogE
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
-    y_train = np.log2(W)
-    y_train = np.array(y_train)
-    y_train = y_train.reshape(len(W), 1)
-    x_train = np.log2(E)
-    x_train = np.array(x_train)
-    x_train = x_train.reshape(len(E), 1)
+    y_train = np.array(np.log2(W)).reshape(-1, 1)
+    x_train = np.array(np.log2(E)).reshape(-1, 1)
+
     model = LinearRegression()
     model.fit(x_train, y_train)
     w = model.coef_[0][0]
@@ -60,11 +59,11 @@ def heavy_vicinity(featureDict):
     for key in featureDict.keys():
         yi = featureDict[key][2]
         xi = featureDict[key][1]
-        outlineScore = (max(yi, C*(xi**beta))/min(yi, C*(xi**beta)))*np.log(abs(yi-C*(xi**beta))+1)
-        outlineScoreDict[key] = outlineScore
+        outlineScoreDict[key] =  outlierness_score(xi, yi, C, beta)
     return outlineScoreDict
 
 
+# Observation 3: ELWPL
 def dominant_edge(featureDict):
     Lambda_w_i = []
     W = []
@@ -74,27 +73,24 @@ def dominant_edge(featureDict):
     #λ=CW^γ => log on both sides => logλ=logC+γlogW
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
-    y_train = np.log2(Lambda_w_i)
-    y_train = np.array(y_train)
-    y_train = y_train.reshape(len(Lambda_w_i), 1)
-    x_train = np.log2(W)
-    x_train = np.array(x_train)
-    x_train = x_train.reshape(len(W), 1)
+    y_train = np.array(np.log2(Lambda_w_i)).reshape(len(Lambda_w_i), 1)
+    x_train = np.array(np.log2(W)).reshape(len(W), 1)
+
     model = LinearRegression()
     model.fit(x_train, y_train)
     w = model.coef_[0][0]
     b = model.intercept_[0]
     C = 2 ** b
-    beta = w
+    gamma = w
     outlineScoreDict = {}
     for key in featureDict.keys():
         yi = featureDict[key][3]
         xi = featureDict[key][2]
-        outlineScore = (max(yi, C * (xi ** beta)) / min(yi, C * (xi ** beta))) * np.log(abs(yi - C * (xi ** beta)) + 1)
-        outlineScoreDict[key] = outlineScore
+        outlineScoreDict[key] =  outlierness_score(xi, yi, C, gamma)
     return outlineScoreDict
 
 
+# Observation 1: EDPL with LOF (Local Outlier Factor)
 def star_or_clique_withLOF(featureDict):
     N = []
     E = []
@@ -104,12 +100,8 @@ def star_or_clique_withLOF(featureDict):
     #E=CN^α => log on both sides => logE=logC+αlogN
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
-    y_train = np.log2(E)
-    y_train = np.array(y_train)
-    y_train = y_train.reshape(len(E), 1)
-    x_train = np.log2(N)
-    x_train = np.array(x_train)
-    x_train = x_train.reshape(len(N), 1)    #the order in x_train and y_train is the same as which in featureDict.keys() now
+    y_train = np.array(np.log2(E)).reshape(-1, 1)
+    x_train = np.array(np.log2(N)).reshape(-1, 1) # the order in x_train and y_train is the same as which in featureDict.keys() now
 
     #prepare data for LOF
     xAndyForLOF = []
@@ -164,6 +156,8 @@ def star_or_clique_withLOF(featureDict):
     return outScoreDict
 
 
+
+# Observation 2: EWPL with LOF (Local Outlier Factor)
 def heavy_vicinity_withLOF(featureDict):
     W = []
     E = []
@@ -208,7 +202,7 @@ def heavy_vicinity_withLOF(featureDict):
     for key in featureDict.keys():
         yi = featureDict[key][2]
         xi = featureDict[key][1]
-        outlineScore = (max(yi, C*(xi**beta))/min(yi, C*(xi**beta)))*np.log(abs(yi-C*(xi**beta))+1)
+        outlineScore =  outlierness_score(xi, yi, C, beta)
         if outlineScore > maxOutLine:
             maxOutLine = outlineScore
 
@@ -225,13 +219,15 @@ def heavy_vicinity_withLOF(featureDict):
     for key in featureDict.keys():
         yi = featureDict[key][2]
         xi = featureDict[key][1]
-        outlineScore = (max(yi, C*(xi**beta))/min(yi, C*(xi**beta)))*np.log(abs(yi-C*(xi**beta))+1)
+        outlineScore = outlierness_score(xi, yi, C, beta)
         LOFScore = LOFScoreArray[count]
         count += 1
         outScore = outlineScore/maxOutLine + LOFScore/maxLOFScore
         outScoreDict[key] = outScore
     return outScoreDict
 
+
+# Observation 3: ELWPL with LOF (Local Outlier Factor)
 def dominant_edge_withLOF(featureDict):
     Lambda_w_i = []
     W = []
@@ -276,7 +272,7 @@ def dominant_edge_withLOF(featureDict):
     for key in featureDict.keys():
         yi = featureDict[key][3]
         xi = featureDict[key][2]
-        outlineScore = (max(yi, C*(xi**gamma))/min(yi, C*(xi**gamma)))*np.log(abs(yi-C*(xi**gamma))+1)
+        outlineScore = outlierness_score(xi, yi, C, gamma)
         if outlineScore > maxOutLine:
             maxOutLine = outlineScore
 
@@ -293,7 +289,7 @@ def dominant_edge_withLOF(featureDict):
     for key in featureDict.keys():
         yi = featureDict[key][3]
         xi = featureDict[key][2]
-        outlineScore = (max(yi, C*(xi**gamma))/min(yi, C*(xi**gamma)))*np.log(abs(yi-C*(xi**gamma))+1)
+        outlineScore = outlierness_score(xi, yi, C, gamma)
         LOFScore = LOFScoreArray[count]
         count += 1
         outScore = outlineScore/maxOutLine + LOFScore/maxLOFScore

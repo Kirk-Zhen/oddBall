@@ -1,5 +1,7 @@
 import networkx as nx
 import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.neighbors import LocalOutlierFactor
 import matplotlib.pyplot as plt
 
 
@@ -63,6 +65,33 @@ def get_feature(G):
 
 path = 'data/sample.txt'
 G = load_data(path)
-fea = get_feature(G)
+featureDict = get_feature(G)
 
-print(fea)
+# print(featureDict)
+
+W = []
+E = []
+for key in featureDict.keys():
+    W.append(featureDict[key][2])
+    E.append(featureDict[key][1])
+#W=CE^β => log on both sides => logW=logC+βlogE
+#regard as y=b+wx to do linear regression
+#here the base of log is 2
+y_train = np.array(np.log2(W)).reshape(-1, 1)
+x_train = np.array(np.log2(E)).reshape(-1, 1)
+
+
+model = LinearRegression()
+model.fit(x_train, y_train)
+# w = model.coef_[0][0]
+# b = model.intercept_[0]
+# C = 2**b
+# beta = w
+# outlineScoreDict = {}
+# for key in featureDict.keys():
+#     yi = featureDict[key][2]
+#     xi = featureDict[key][1]
+#     outlineScore = (max(yi, C*(xi**beta))/min(yi, C*(xi**beta)))*np.log(abs(yi-C*(xi**beta))+1)
+#     outlineScoreDict[key] = outlineScore
+
+print(model.coef_)
