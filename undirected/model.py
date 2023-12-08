@@ -13,9 +13,9 @@ def outlierness_score(xi, yi, C, theta):
 def star_or_clique(featureDict):
     N = []
     E = []
-    for key in featureDict.keys():
-        N.append(featureDict[key][0])
-        E.append(featureDict[key][1])
+    for node in featureDict.keys():
+        N.append(featureDict[node][0])
+        E.append(featureDict[node][1])
     #E=CN^α => log on both sides => logE=logC+αlogN
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
@@ -29,10 +29,10 @@ def star_or_clique(featureDict):
     C = 2**b
     alpha = w
     outlineScoreDict = {}
-    for key in featureDict.keys():
-        yi = featureDict[key][1]
-        xi = featureDict[key][0]
-        outlineScoreDict[key] =  outlierness_score(xi, yi, C, alpha)
+    for node in featureDict.keys():
+        yi = featureDict[node][1]
+        xi = featureDict[node][0]
+        outlineScoreDict[node] =  outlierness_score(xi, yi, C, alpha)
     return outlineScoreDict
 
 
@@ -40,9 +40,9 @@ def star_or_clique(featureDict):
 def heavy_vicinity(featureDict):
     W = []
     E = []
-    for key in featureDict.keys():
-        W.append(featureDict[key][2])
-        E.append(featureDict[key][1])
+    for node in featureDict.keys():
+        W.append(featureDict[node][2])
+        E.append(featureDict[node][1])
     #W=CE^β => log on both sides => logW=logC+βlogE
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
@@ -56,10 +56,10 @@ def heavy_vicinity(featureDict):
     C = 2**b
     beta = w
     outlineScoreDict = {}
-    for key in featureDict.keys():
-        yi = featureDict[key][2]
-        xi = featureDict[key][1]
-        outlineScoreDict[key] =  outlierness_score(xi, yi, C, beta)
+    for node in featureDict.keys():
+        yi = featureDict[node][2]
+        xi = featureDict[node][1]
+        outlineScoreDict[node] =  outlierness_score(xi, yi, C, beta)
     return outlineScoreDict
 
 
@@ -67,9 +67,9 @@ def heavy_vicinity(featureDict):
 def dominant_edge(featureDict):
     Lambda_w_i = []
     W = []
-    for key in featureDict.keys():
-        Lambda_w_i.append(featureDict[key][3])
-        W.append(featureDict[key][2])
+    for node in featureDict.keys():
+        Lambda_w_i.append(featureDict[node][3])
+        W.append(featureDict[node][2])
     #λ=CW^γ => log on both sides => logλ=logC+γlogW
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
@@ -83,10 +83,10 @@ def dominant_edge(featureDict):
     C = 2 ** b
     gamma = w
     outlineScoreDict = {}
-    for key in featureDict.keys():
-        yi = featureDict[key][3]
-        xi = featureDict[key][2]
-        outlineScoreDict[key] =  outlierness_score(xi, yi, C, gamma)
+    for node in featureDict.keys():
+        yi = featureDict[node][3]
+        xi = featureDict[node][2]
+        outlineScoreDict[node] =  outlierness_score(xi, yi, C, gamma)
     return outlineScoreDict
 
 
@@ -94,9 +94,9 @@ def dominant_edge(featureDict):
 def star_or_clique_withLOF(featureDict):
     N = []
     E = []
-    for key in featureDict.keys():
-        N.append(featureDict[key][0])
-        E.append(featureDict[key][1])
+    for node in featureDict.keys():
+        N.append(featureDict[node][0])
+        E.append(featureDict[node][1])
     #E=CN^α => log on both sides => logE=logC+αlogN
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
@@ -128,9 +128,9 @@ def star_or_clique_withLOF(featureDict):
 
     #get the maximum outLine
     maxOutLine = 0
-    for key in featureDict.keys():
-        yi = featureDict[key][1]
-        xi = featureDict[key][0]
+    for node in featureDict.keys():
+        yi = featureDict[node][1]
+        xi = featureDict[node][0]
         outlineScore = (max(yi, C*(xi**alpha))/min(yi, C*(xi**alpha)))*np.log(abs(yi-C*(xi**alpha))+1)
         if outlineScore > maxOutLine:
             maxOutLine = outlineScore
@@ -145,14 +145,14 @@ def star_or_clique_withLOF(featureDict):
 
     print('maxLOFScore={}'.format(maxLOFScore))
 
-    for key in featureDict.keys():
-        yi = featureDict[key][1]
-        xi = featureDict[key][0]
+    for node in featureDict.keys():
+        yi = featureDict[node][1]
+        xi = featureDict[node][0]
         outlineScore = (max(yi, C*(xi**alpha))/min(yi, C*(xi**alpha)))*np.log(abs(yi-C*(xi**alpha))+1)
         LOFScore = LOFScoreArray[count]
         count += 1
         outScore = outlineScore/maxOutLine + LOFScore/maxLOFScore
-        outScoreDict[key] = outScore
+        outScoreDict[node] = outScore
     return outScoreDict
 
 
@@ -161,9 +161,9 @@ def star_or_clique_withLOF(featureDict):
 def heavy_vicinity_withLOF(featureDict):
     W = []
     E = []
-    for key in featureDict.keys():
-        W.append(featureDict[key][2])
-        E.append(featureDict[key][1])
+    for node in featureDict.keys():
+        W.append(featureDict[node][2])
+        E.append(featureDict[node][1])
     #W=CE^β => log on both sides => logW=logC+βlogE
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
@@ -199,9 +199,9 @@ def heavy_vicinity_withLOF(featureDict):
 
     #get the maximum outLine
     maxOutLine = 0
-    for key in featureDict.keys():
-        yi = featureDict[key][2]
-        xi = featureDict[key][1]
+    for node in featureDict.keys():
+        yi = featureDict[node][2]
+        xi = featureDict[node][1]
         outlineScore =  outlierness_score(xi, yi, C, beta)
         if outlineScore > maxOutLine:
             maxOutLine = outlineScore
@@ -216,14 +216,14 @@ def heavy_vicinity_withLOF(featureDict):
 
     print('maxLOFScore={}'.format(maxLOFScore))
 
-    for key in featureDict.keys():
-        yi = featureDict[key][2]
-        xi = featureDict[key][1]
+    for node in featureDict.keys():
+        yi = featureDict[node][2]
+        xi = featureDict[node][1]
         outlineScore = outlierness_score(xi, yi, C, beta)
         LOFScore = LOFScoreArray[count]
         count += 1
         outScore = outlineScore/maxOutLine + LOFScore/maxLOFScore
-        outScoreDict[key] = outScore
+        outScoreDict[node] = outScore
     return outScoreDict
 
 
@@ -231,9 +231,9 @@ def heavy_vicinity_withLOF(featureDict):
 def dominant_edge_withLOF(featureDict):
     Lambda_w_i = []
     W = []
-    for key in featureDict.keys():
-        Lambda_w_i.append(featureDict[key][3])
-        W.append(featureDict[key][2])
+    for node in featureDict.keys():
+        Lambda_w_i.append(featureDict[node][3])
+        W.append(featureDict[node][2])
     #λ=CW^γ => log on both sides => logλ=logC+γlogW
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
@@ -269,9 +269,9 @@ def dominant_edge_withLOF(featureDict):
 
     #get the maximum outLine
     maxOutLine = 0
-    for key in featureDict.keys():
-        yi = featureDict[key][3]
-        xi = featureDict[key][2]
+    for node in featureDict.keys():
+        yi = featureDict[node][3]
+        xi = featureDict[node][2]
         outlineScore = outlierness_score(xi, yi, C, gamma)
         if outlineScore > maxOutLine:
             maxOutLine = outlineScore
@@ -286,12 +286,12 @@ def dominant_edge_withLOF(featureDict):
 
     print('maxLOFScore={}'.format(maxLOFScore))
 
-    for key in featureDict.keys():
-        yi = featureDict[key][3]
-        xi = featureDict[key][2]
+    for node in featureDict.keys():
+        yi = featureDict[node][3]
+        xi = featureDict[node][2]
         outlineScore = outlierness_score(xi, yi, C, gamma)
         LOFScore = LOFScoreArray[count]
         count += 1
         outScore = outlineScore/maxOutLine + LOFScore/maxLOFScore
-        outScoreDict[key] = outScore
+        outScoreDict[node] = outScore
     return outScoreDict
