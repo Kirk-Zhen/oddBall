@@ -131,7 +131,7 @@ def star_or_clique_withLOF(featureDict):
     for node in featureDict.keys():
         yi = featureDict[node][1]
         xi = featureDict[node][0]
-        outlineScore = (max(yi, C*(xi**alpha))/min(yi, C*(xi**alpha)))*np.log(abs(yi-C*(xi**alpha))+1)
+        outlineScore = outlierness_score(xi, yi, C, alpha)
         if outlineScore > maxOutLine:
             maxOutLine = outlineScore
 
@@ -148,7 +148,7 @@ def star_or_clique_withLOF(featureDict):
     for node in featureDict.keys():
         yi = featureDict[node][1]
         xi = featureDict[node][0]
-        outlineScore = (max(yi, C*(xi**alpha))/min(yi, C*(xi**alpha)))*np.log(abs(yi-C*(xi**alpha))+1)
+        outlineScore = outlierness_score(xi, yi, C, alpha)
         LOFScore = LOFScoreArray[count]
         count += 1
         outScore = outlineScore/maxOutLine + LOFScore/maxLOFScore
