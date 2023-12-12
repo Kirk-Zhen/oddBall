@@ -104,11 +104,7 @@ def star_or_clique_withLOF(featureDict):
     x_train = np.array(np.log2(N)).reshape(-1, 1) # the order in x_train and y_train is the same as which in featureDict.keys() now
 
     #prepare data for LOF
-    xAndyForLOF = []
-    for index in range(len(N)):
-        tempArray = np.array([x_train[index][0], y_train[index][0]])
-        xAndyForLOF.append(tempArray)
-    xAndyForLOF = np.array(xAndyForLOF)
+    xAndyForLOF = np.concatenate([x_train, y_train], axis=1)
 
     model = LinearRegression()
     model.fit(x_train, y_train)
@@ -167,19 +163,12 @@ def heavy_vicinity_withLOF(featureDict):
     #W=CE^β => log on both sides => logW=logC+βlogE
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
-    y_train = np.log2(W)
-    y_train = np.array(y_train)
-    y_train = y_train.reshape(len(W), 1)
-    x_train = np.log2(E)
-    x_train = np.array(x_train)
-    x_train = x_train.reshape(len(E), 1)    #the order in x_train and y_train is the same as which in featureDict.keys() now
+    y_train = np.array(np.log2(W)).reshape(-1, 1)
+    x_train = np.array(np.log2(E)).reshape(-1, 1) #the order in x_train and y_train is the same as which in featureDict.keys() now
+
 
     #prepare data for LOF
-    xAndyForLOF = []
-    for index in range(len(W)):
-        tempArray = np.array([x_train[index][0], y_train[index][0]])
-        xAndyForLOF.append(tempArray)
-    xAndyForLOF = np.array(xAndyForLOF)
+    xAndyForLOF = np.concatenate([x_train, y_train], axis=1)
 
     model = LinearRegression()
     model.fit(x_train, y_train)
@@ -237,19 +226,12 @@ def dominant_edge_withLOF(featureDict):
     #λ=CW^γ => log on both sides => logλ=logC+γlogW
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
-    y_train = np.log2(Lambda_w_i)
-    y_train = np.array(y_train)
-    y_train = y_train.reshape(len(Lambda_w_i), 1)
-    x_train = np.log2(W)
-    x_train = np.array(x_train)
-    x_train = x_train.reshape(len(W), 1)    #the order in x_train and y_train is the same as which in featureDict.keys() now
+    y_train = np.array(np.log2(Lambda_w_i)).reshape(-1, 1)
+    x_train = np.array(np.log2(W)).reshape(-1, 1) #the order in x_train and y_train is the same as which in featureDict.keys() now
+
 
     #prepare data for LOF
-    xAndyForLOF = []
-    for index in range(len(W)):
-        tempArray = np.array([x_train[index][0], y_train[index][0]])
-        xAndyForLOF.append(tempArray)
-    xAndyForLOF = np.array(xAndyForLOF)
+    xAndyForLOF = np.concatenate([x_train, y_train], axis=1)
 
     model = LinearRegression()
     model.fit(x_train, y_train)

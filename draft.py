@@ -63,35 +63,76 @@ def get_feature(G):
     return featureDict
 
 
+def outlierness_score(xi, yi, C, theta):
+    return (max(yi, C*(xi**theta))/min(yi, C*(xi**theta))) * np.log(abs(yi-C*(xi**theta))+1)
+
+
 path = 'data/sample.txt'
 G = load_data(path)
 featureDict = get_feature(G)
 
 # print(featureDict)
 
-W = []
+N = []
 E = []
-for key in featureDict.keys():
-    W.append(featureDict[key][2])
-    E.append(featureDict[key][1])
-#W=CE^β => log on both sides => logW=logC+βlogE
+for node in featureDict.keys():
+    N.append(featureDict[node][0])
+    E.append(featureDict[node][1])
+#E=CN^α => log on both sides => logE=logC+αlogN
 #regard as y=b+wx to do linear regression
 #here the base of log is 2
-y_train = np.array(np.log2(W)).reshape(-1, 1)
-x_train = np.array(np.log2(E)).reshape(-1, 1)
+y_train = np.array(np.log2(E)).reshape(-1, 1)
+x_train = np.array(np.log2(N)).reshape(-1, 1) # the order in x_train and y_train is the same as which in featureDict.keys() now
 
+#prepare data for LOF
+xAndyForLOF = np.concatenate([x_train, y_train], axis=1)
+# for index in range(len(N)):
+#     tempArray = np.array([x_train[index][0], y_train[index][0]])
+#     xAndyForLOF.append(tempArray)
+# xAndyForLOF = np.array(xAndyForLOF)
 
 model = LinearRegression()
 model.fit(x_train, y_train)
-# w = model.coef_[0][0]
-# b = model.intercept_[0]
-# C = 2**b
-# beta = w
-# outlineScoreDict = {}
-# for key in featureDict.keys():
-#     yi = featureDict[key][2]
-#     xi = featureDict[key][1]
-#     outlineScore = (max(yi, C*(xi**beta))/min(yi, C*(xi**beta)))*np.log(abs(yi-C*(xi**beta))+1)
-#     outlineScoreDict[key] = outlineScore
+w = model.coef_[0][0]
+b = model.intercept_[0]
+C = 2**b
+alpha = w
+print('alpha={}'.format(alpha))
 
-print(model.coef_)
+#LOF algorithm
+clf = LocalOutlierFactor(n_neighbors=20)
+clf.fit(xAndyForLOF)
+LOFScoreArray = -clf.negative_outlier_factor_
+
+outScoreDict = {}
+count = 0   #Used to take LOFScore in sequence from LOFScoreArray
+
+#get the maximum outLine
+maxOutLine = 0
+for node in featureDict.keys():
+    yi = featureDict[node][1]
+    xi = featureDict[node][0]
+    outlineScore = outlierness_score(xi, yi, C, alpha)
+    if outlineScore > maxOutLine:
+        maxOutLine = outlineScore
+
+print('maxOutLine={}'.format(maxOutLine))
+
+#get the maximum LOFScore
+maxLOFScore = 0
+for ite in range(len(N)):
+    if LOFScoreArray[ite] > maxLOFScore:
+        maxLOFScore = LOFScoreArray[ite]
+
+print('maxLOFScore={}'.format(maxLOFScore))
+
+for node in featureDict.keys():
+    yi = featureDict[node][1]
+    xi = featureDict[node][0]
+    outlineScore = outlierness_score(xi, yi, C, alpha)
+    LOFScore = LOFScoreArray[count]
+    count += 1
+    outScore = outlineScore/maxOutLine + LOFScore/maxLOFScore
+    outScoreDict[node] = outScore
+
+print(outScoreDict)
