@@ -72,12 +72,9 @@ G = load_data(path)
 featureDict = get_feature(G)
 
 # print(featureDict)
+N = [featureDict[node][0] for node in featureDict.keys()]
+E = [featureDict[node][1] for node in featureDict.keys()]
 
-N = []
-E = []
-for node in featureDict.keys():
-    N.append(featureDict[node][0])
-    E.append(featureDict[node][1])
 #E=CN^α => log on both sides => logE=logC+αlogN
 #regard as y=b+wx to do linear regression
 #here the base of log is 2

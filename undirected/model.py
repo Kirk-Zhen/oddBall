@@ -11,11 +11,9 @@ def outlierness_score(xi, yi, C, theta):
 
 # Observation 1: EDPL
 def star_or_clique(featureDict):
-    N = []
-    E = []
-    for node in featureDict.keys():
-        N.append(featureDict[node][0])
-        E.append(featureDict[node][1])
+    N = [featureDict[node][0] for node in featureDict.keys()]
+    E = [featureDict[node][1] for node in featureDict.keys()]
+
     #E=CN^α => log on both sides => logE=logC+αlogN
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
@@ -38,11 +36,9 @@ def star_or_clique(featureDict):
 
 # Observation 2: EWPL
 def heavy_vicinity(featureDict):
-    W = []
-    E = []
-    for node in featureDict.keys():
-        W.append(featureDict[node][2])
-        E.append(featureDict[node][1])
+    W = [featureDict[node][2] for node in featureDict.keys()]
+    E = [featureDict[node][1] for node in featureDict.keys()]
+
     #W=CE^β => log on both sides => logW=logC+βlogE
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
@@ -65,11 +61,9 @@ def heavy_vicinity(featureDict):
 
 # Observation 3: ELWPL
 def dominant_edge(featureDict):
-    Lambda_w_i = []
-    W = []
-    for node in featureDict.keys():
-        Lambda_w_i.append(featureDict[node][3])
-        W.append(featureDict[node][2])
+    Lambda_w_i = [featureDict[node][3] for node in featureDict.keys()]
+    W = [featureDict[node][2] for node in featureDict.keys()]
+    
     #λ=CW^γ => log on both sides => logλ=logC+γlogW
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
@@ -92,11 +86,9 @@ def dominant_edge(featureDict):
 
 # Observation 1: EDPL with LOF (Local Outlier Factor)
 def star_or_clique_withLOF(featureDict):
-    N = []
-    E = []
-    for node in featureDict.keys():
-        N.append(featureDict[node][0])
-        E.append(featureDict[node][1])
+    N = [featureDict[node][0] for node in featureDict.keys()]
+    E = [featureDict[node][1] for node in featureDict.keys()]
+
     #E=CN^α => log on both sides => logE=logC+αlogN
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
@@ -155,11 +147,10 @@ def star_or_clique_withLOF(featureDict):
 
 # Observation 2: EWPL with LOF (Local Outlier Factor)
 def heavy_vicinity_withLOF(featureDict):
-    W = []
-    E = []
-    for node in featureDict.keys():
-        W.append(featureDict[node][2])
-        E.append(featureDict[node][1])
+
+    W = [featureDict[node][2] for node in featureDict.keys()]
+    E = [featureDict[node][1] for node in featureDict.keys()]
+
     #W=CE^β => log on both sides => logW=logC+βlogE
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
@@ -218,11 +209,9 @@ def heavy_vicinity_withLOF(featureDict):
 
 # Observation 3: ELWPL with LOF (Local Outlier Factor)
 def dominant_edge_withLOF(featureDict):
-    Lambda_w_i = []
-    W = []
-    for node in featureDict.keys():
-        Lambda_w_i.append(featureDict[node][3])
-        W.append(featureDict[node][2])
+    Lambda_w_i = [featureDict[node][3] for node in featureDict.keys()]
+    W = [featureDict[node][2] for node in featureDict.keys()]
+
     #λ=CW^γ => log on both sides => logλ=logC+γlogW
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
