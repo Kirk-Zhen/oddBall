@@ -74,14 +74,17 @@ path = 'data/sample.txt'
 G = load_data(path)
 featureDict = get_feature(G)
 
-E = [featureDict[node][1] for node in featureDict.keys()]
 N = [featureDict[node][0] for node in featureDict.keys()]
+E = [featureDict[node][1] for node in featureDict.keys()]
 
 #E=CN^α => log on both sides => logE=logC+αlogN
 #regard as y=b+wx to do linear regression
 #here the base of log is 2
 y_train = np.array(np.log2(E)).reshape(-1, 1)
-x_train = np.array(np.log2(N)).reshape(-1, 1)
+x_train = np.array(np.log2(N)).reshape(-1, 1) # the order in x_train and y_train is the same as which in featureDict.keys() now
+
+#prepare data for LOF
+xAndyForLOF = np.concatenate([x_train, y_train], axis=1)
 
 model = LinearRegression()
 model.fit(x_train, y_train)
@@ -89,12 +92,41 @@ w = model.coef_[0][0]
 b = model.intercept_[0]
 C = 2**b
 alpha = w
+print('alpha={}'.format(alpha))
 
-outlineScoreDict = {}
+#LOF algorithm
+clf = LocalOutlierFactor(n_neighbors=10)
+clf.fit(xAndyForLOF)
+LOFScoreArray = -clf.negative_outlier_factor_
+
+outScoreDict = {}
+count = 0   #Used to take LOFScore in sequence from LOFScoreArray
+
+#get the maximum outLine
+maxOutLine = 0
 for node in featureDict.keys():
     yi = featureDict[node][1]
     xi = featureDict[node][0]
-    outlineScoreDict[node] =  outlierness_score(xi, yi, C, alpha)
+    outlineScore = outlierness_score(xi, yi, C, alpha)
+    if outlineScore > maxOutLine:
+        maxOutLine = outlineScore
 
-print(outlineScoreDict)
-# print(np.array([outlineScoreDict[key] for key in outlineScoreDict.keys()]).reshape(-1,1))
+print('maxOutLine={}'.format(maxOutLine))
+
+#get the maximum LOFScore
+maxLOFScore = 0
+for ite in range(len(N)):
+    if LOFScoreArray[ite] > maxLOFScore:
+        maxLOFScore = LOFScoreArray[ite]
+
+print('maxLOFScore={}'.format(maxLOFScore))
+
+for node in featureDict.keys():
+    yi = featureDict[node][1]
+    xi = featureDict[node][0]
+    outlineScore = outlierness_score(xi, yi, C, alpha)
+    LOFScore = LOFScoreArray[count]
+    count += 1
+    outScore = outlineScore/maxOutLine + LOFScore/maxLOFScore
+    outScoreDict[node] = outScore
+print(outScoreDict)

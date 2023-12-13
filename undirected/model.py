@@ -37,9 +37,6 @@ def star_or_clique(featureDict):
         yi = featureDict[node][1]
         xi = featureDict[node][0]
         outlineScoreDict[node] =  outlierness_score(xi, yi, C, alpha)
-    # yi = np.array([featureDict[node][1] for node in featureDict.keys()]).reshape(-1, 1)
-    # xi = np.array([featureDict[node][0] for node in featureDict.keys()]).reshape(-1, 1)
-    # outlineScoreArray = outlierness_score(xi, yi, C, alpha)
     return outlineScoreDict
 
 
@@ -116,7 +113,7 @@ def star_or_clique_withLOF(featureDict):
     print('alpha={}'.format(alpha))
 
     #LOF algorithm
-    clf = LocalOutlierFactor(n_neighbors=20)
+    clf = LocalOutlierFactor(n_neighbors=10)
     clf.fit(xAndyForLOF)
     LOFScoreArray = -clf.negative_outlier_factor_
 
@@ -179,7 +176,7 @@ def heavy_vicinity_withLOF(featureDict):
     print('beta={}'.format(beta))
 
     #LOF algorithm
-    clf = LocalOutlierFactor(n_neighbors=20)
+    clf = LocalOutlierFactor(n_neighbors=10)
     clf.fit(xAndyForLOF)
     LOFScoreArray = -clf.negative_outlier_factor_
 
@@ -240,7 +237,7 @@ def dominant_edge_withLOF(featureDict):
     print('gamma={}'.format(gamma))
 
     #LOF algorithm
-    clf = LocalOutlierFactor(n_neighbors=20)
+    clf = LocalOutlierFactor(n_neighbors=10)
     clf.fit(xAndyForLOF)
     LOFScoreArray = -clf.negative_outlier_factor_
 
