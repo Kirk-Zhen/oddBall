@@ -6,11 +6,11 @@ from sklearn.neighbors import LocalOutlierFactor
 # feature dictionary which format is  { node i's id : [Ni, Ei, Wi, λw,i] }
 
 def star_or_clique(featureDict):
-    N = []
     E = []
+    N = []
     for key in featureDict.keys():
-        N.append(featureDict[key][0])
         E.append(featureDict[key][1])
+        N.append(featureDict[key][0])
     #E=CN^α => log on both sides => logE=logC+αlogN
     #regard as y=b+wx to do linear regression
     #here the base of log is 2

@@ -8,12 +8,17 @@ from sklearn.neighbors import LocalOutlierFactor
 
 def outlierness_score(xi, yi, C, theta):
     return (max(yi, C*(xi**theta))/min(yi, C*(xi**theta))) * np.log(abs(yi-C*(xi**theta))+1)
+    # a_max = np.max(np.concatenate([yi, C*(xi**theta)], axis=1), axis=1).reshape(-1,1)
+    # a_min = np.min(np.concatenate([yi, C*(xi**theta)], axis=1), axis=1).reshape(-1,1)
+    # a_log = np.log(abs(yi-C*(xi**theta))+1)
+    # return ( a_max / a_min ) * a_log
+    
 
 # Observation 1: EDPL
 def star_or_clique(featureDict):
-    N = [featureDict[node][0] for node in featureDict.keys()]
     E = [featureDict[node][1] for node in featureDict.keys()]
-
+    N = [featureDict[node][0] for node in featureDict.keys()]
+    
     #E=CN^α => log on both sides => logE=logC+αlogN
     #regard as y=b+wx to do linear regression
     #here the base of log is 2
@@ -26,11 +31,15 @@ def star_or_clique(featureDict):
     b = model.intercept_[0]
     C = 2**b
     alpha = w
+
     outlineScoreDict = {}
     for node in featureDict.keys():
         yi = featureDict[node][1]
         xi = featureDict[node][0]
         outlineScoreDict[node] =  outlierness_score(xi, yi, C, alpha)
+    # yi = np.array([featureDict[node][1] for node in featureDict.keys()]).reshape(-1, 1)
+    # xi = np.array([featureDict[node][0] for node in featureDict.keys()]).reshape(-1, 1)
+    # outlineScoreArray = outlierness_score(xi, yi, C, alpha)
     return outlineScoreDict
 
 
