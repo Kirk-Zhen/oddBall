@@ -153,4 +153,4 @@ cython_debug/
 
 
 #dataset
-date/
+data/
