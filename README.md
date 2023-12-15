@@ -24,4 +24,4 @@ If you find this work useful for your research, please cite the original paper:
 L. Akoglu, M. McGlohon, and C. Faloutsos, “Oddball: Spotting anomalies in weighted graphs,” in Proceedings of PAKDD. Springer, 2010, pp. 410–421.
 
 ##### Source code reference:
-The code in this repository is a fork of the original repository [oddball_py3](https://github.com/gloooryyt/oddball_py3), but with some additional optimizations, and new functionalities for directed graph.
+This is a fork of the original repository [oddball_py3](https://github.com/gloooryyt/oddball_py3), but with some additional optimizations, and new functionalities for directed graph.
