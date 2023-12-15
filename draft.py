@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import LocalOutlierFactor
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 def load_data(path):
@@ -11,6 +12,15 @@ def load_data(path):
     for edge in data:
         G.add_edge(edge[0], edge[1], weight=edge[2])
     return G
+
+
+def load_csv_data(path):
+    df = pd.read_csv(path)
+    G = nx.Graph()
+    for index, edge in df.iterrows():
+        G.add_edge(edge['u'], edge['v'], weight=edge['weight'])
+    return G
+
 
 def get_feature(G):
     '''
@@ -70,9 +80,14 @@ def outlierness_score(xi, yi, C, theta):
     # a_log = np.log(abs(yi-C*(xi**theta))+1)
     # return ( a_max / a_min ) * a_log
 
-path = 'data/sample.txt'
-G = load_data(path)
+# path = 'data/sample.txt'
+# G = load_data(path)
+# featureDict = get_feature(G)
+
+path = 'data/sample.csv'
+G = load_csv_data(path)
 featureDict = get_feature(G)
+
 
 N = [featureDict[node][0] for node in featureDict.keys()]
 E = [featureDict[node][1] for node in featureDict.keys()]

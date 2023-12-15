@@ -1,6 +1,7 @@
 
 import numpy as np
 import networkx as nx
+import pandas as pd
 
 #load data, a weighted undirected graph
 def load_data(path):
@@ -9,6 +10,14 @@ def load_data(path):
     for ite in data:
         G.add_edge(ite[0], ite[1], weight=ite[2])
     return G
+
+def load_csv_data(path):
+    df = pd.read_csv(path)
+    G = nx.Graph()
+    for index, edge in df.iterrows():
+        G.add_edge(edge['u'], edge['v'], weight=edge['weight'])
+    return G
+
 
 def get_feature(G):
     '''
