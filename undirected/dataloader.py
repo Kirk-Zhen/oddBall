@@ -11,9 +11,9 @@ def load_data(path):
         G.add_edge(ite[0], ite[1], weight=ite[2])
     return G
 
-def load_csv_data(path):
+def load_csv_data(path, directed:bool=False):
     df = pd.read_csv(path)
-    G = nx.Graph()
+    G = nx.Graph() if not directed else nx.DiGraph()
     for index, edge in df.iterrows():
         G.add_edge(edge['u'], edge['v'], weight=edge['weight'])
     return G
