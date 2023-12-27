@@ -14,6 +14,7 @@ def load_data(path):
     return G
 
 
+
 def load_csv_data(path):
     df = pd.read_csv(path)
     G = nx.Graph()
