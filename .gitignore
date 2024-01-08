@@ -152,5 +152,8 @@ cython_debug/
 #.idea/
 
 
-#dataset
+# dataset
 data/
+
+# ipynb testing file
+draft.ipynb

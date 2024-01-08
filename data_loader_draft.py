@@ -21,7 +21,7 @@ print(G.nodes())
 
 featureDict = {}
 nodelist = list(G.nodes)
-for node in nodelist:
+for node in nodelist[2:3]:
     #the number of node i's neighbor
     Ni = G.degree(node)
 
@@ -37,4 +37,4 @@ for node in nodelist:
 
     Lambda_w_i = max(abs(eigenvalue[0]), abs(eigenvalue[-1]))
     featureDict[node] = [Ni, Ei, Wi, Lambda_w_i]
-print(featureDict)
+print(egonet_adjacency_matrix)
