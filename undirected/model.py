@@ -40,6 +40,7 @@ def star_or_clique(featureDict):
     return outlineScoreDict
 
 
+
 # Observation 2: EWPL
 def heavy_vicinity(featureDict):
     W = [featureDict[node][2] for node in featureDict.keys()]
