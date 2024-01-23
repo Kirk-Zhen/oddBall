@@ -37,6 +37,8 @@ def star_or_clique(featureDict):
         yi = featureDict[node][1]
         xi = featureDict[node][0]
         outlineScoreDict[node] =  outlierness_score(xi, yi, C, alpha)
+    
+    print(f'C:{2**b}, alpha={w}')
     return outlineScoreDict
 
 
@@ -62,6 +64,8 @@ def heavy_vicinity(featureDict):
         yi = featureDict[node][2]
         xi = featureDict[node][1]
         outlineScoreDict[node] =  outlierness_score(xi, yi, C, beta)
+    
+    print(f'C:{2**b}, beta={w}')
     return outlineScoreDict
 
 
@@ -87,6 +91,8 @@ def dominant_edge(featureDict):
         yi = featureDict[node][3]
         xi = featureDict[node][2]
         outlineScoreDict[node] =  outlierness_score(xi, yi, C, gamma)
+    
+    print(f'C:{2**b}, gamma={w}')
     return outlineScoreDict
 
 
